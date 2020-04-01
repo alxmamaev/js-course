@@ -13,13 +13,9 @@ class Variable {
     }
 
     toString(){
-        let outputString = '';
-        outputString += this.name;
-
-        return outputString;
+        return this.name;
     }
 }
-
 
 class Const{
     constructor(value) {
@@ -31,107 +27,119 @@ class Const{
     }
 
     toString(){
-        let outputString = '';
-        outputString += String(this.value);
-
-        return outputString;
+        return String(this.value);
     }
 }
 
 
-class DoubleOperation{
-    constructor(func1, func2) {
-        this.func1 = func1;
-        this.func2 = func2;
-        this.symbol = "";
+class BaseOperation{
+    constructor(symbol, ...args) {
+        this.funcs = args
+        this.symbol = symbol;
     }
 
     toString(){
         let outputString = '';
-        outputString += this.func1.toString();
-        outputString += " ";
-        outputString += this.func2.toString();
-        outputString += " ";
+        for(var i = 0; i< this.funcs.length; i++){
+            outputString += this.funcs[i].toString();
+            outputString += ' ';
+        }
         outputString += this.symbol;
 
         return outputString;
     }
+
 }
 
 
-class Add extends DoubleOperation{
+class Add extends BaseOperation{
 
     constructor(func1, func2){
-        super(func1, func2);
-        this.symbol = "+";
+        super("+", func1, func2);
     }
 
     evaluate(x, y, z){
-        return this.func1.evaluate(x, y, z) + this.func2.evaluate(x, y, z);
+        return this.funcs[0].evaluate(x, y, z) + this.funcs[1].evaluate(x, y, z);
     }
 }
 
 
-class Subtract extends DoubleOperation{
+class Subtract extends BaseOperation{
     constructor(func1, func2){
-        super(func1, func2);
-        this.symbol = "-";
+        super("-", func1, func2);
     }
 
     evaluate(x, y, z){
-        return this.func1.evaluate(x, y, z) - this.func2.evaluate(x, y, z);
+        return this.funcs[0].evaluate(x, y, z) - this.funcs[1].evaluate(x, y, z);
     }
 }
 
 
-class Divide extends DoubleOperation{
+class Divide extends BaseOperation{
     constructor(func1, func2){
-        super(func1, func2);
-        this.symbol = "/";
+        super("/", func1, func2);
     }
 
     evaluate(x, y, z){
-        return this.func1.evaluate(x, y, z) / this.func2.evaluate(x, y, z);
+        return this.funcs[0].evaluate(x, y, z) / this.funcs[1].evaluate(x, y, z);
     }
 }
 
 
-class Multiply extends DoubleOperation{
+class Multiply extends BaseOperation{
     constructor(func1, func2){
-        super(func1, func2);
-        this.symbol = "*";
+        super("*", func1, func2);
     }
 
     evaluate(x, y, z){
-        return this.func1.evaluate(x, y, z) * this.func2.evaluate(x, y, z);
+        return this.funcs[0].evaluate(x, y, z) * this.funcs[1].evaluate(x, y, z);
     }
 }
 
-
-class UnoOperation{
-    constructor(func) {
-        this.func = func;
-        this.symbol = "";
-    }
-
-    toString(){
-        let outputString = '';
-        outputString += this.func.toString();
-        outputString += " ";
-        outputString += this.symbol;
-
-        return outputString;
-    }
-}
-
-
-class Negate extends UnoOperation{
+class Negate extends BaseOperation{
     constructor(func){
-        super(func);
-        this.symbol = "negate";
+        super("negate", func);
     }
 
     evaluate(x, y, z){
-        return this.func.evaluate(x, y, z) * (-1);
+        return this.funcs[0].evaluate(x, y, z) * (-1);
     }
+}
+
+
+
+class Min3 extends BaseOperation{
+    constructor(func1, func2, func3) {
+        super("min3", func1, func2, func3);
+    }
+
+    evaluate(x, y, z){
+        var func_results = []
+
+        for(var i = 0; i< this.funcs.length; i++){
+            var v = this.funcs[i].evaluate(x, y, z);
+            func_results.push(v)
+        }
+
+        return Math.min.apply(Math, func_results) 
+    }
+
+}  
+
+class Max5 extends BaseOperation{
+    constructor(func1, func2, func3, func4, func5) {
+        super("max5", func1, func2, func3, func4, func5);
+    }
+
+    evaluate(x, y, z){
+        var func_results = []
+
+        for(var i = 0; i< this.funcs.length; i++){
+            var v = this.funcs[i].evaluate(x, y, z);
+            func_results.push(v)
+        }
+
+        return Math.max.apply(Math, func_results) 
+    }
+
 }
